@@ -23,6 +23,29 @@ export function App() {
     if (search === '') {
       return;
     }
+
+    const searchImages = () => {
+      setLoading(true);
+      API.getImages(search, page)
+        .then(response => {
+          if (page === 1) {
+            return setImg([...response]);
+          }
+          setImg(prevState => {
+            return [...prevState, ...response];
+          });
+
+          window.scrollTo({
+            top: document.documentElement.scrollHeight,
+            behavior: 'smooth',
+          });
+        })
+        .catch(error => console.log(error))
+        .finally(() => {
+          setLoading(false);
+        });
+    };
+
     searchImages();
   }, [search, page]);
 
@@ -40,28 +63,6 @@ export function App() {
     const largeImg = e.target.dataset.action;
     setLargePicture(largeImg);
     toggleModal();
-  };
-
-  const searchImages = () => {
-    setLoading(true);
-    API.getImages(search, page)
-      .then(response => {
-        if (page === 1) {
-          return setImg([...response]);
-        }
-        setImg(prevState => {
-          return [...prevState, ...response];
-        });
-
-        window.scrollTo({
-          top: document.documentElement.scrollHeight,
-          behavior: 'smooth',
-        });
-      })
-      .catch(error => console.log(error))
-      .finally(() => {
-        setLoading(false);
-      });
   };
 
   const handleChangePage = () => {
